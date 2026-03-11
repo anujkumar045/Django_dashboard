@@ -191,6 +191,10 @@
             <a href="{% url 'add_emp' %}">Add Employee</a>
             <a href="{% url 'show_emp' %}">Show Employee</a>
             <a href="{% url 'emp_all_query' %}">Employee Query</a>
+            <a href="{% url 'add_item' %}">Add Item</a>
+            <a href="{% url 'show_item' %}">Show Item</a>
+
+
             <a href="#">Profile</a>
         </div>
 
@@ -351,7 +355,12 @@
 
                 {% elif emp_all_query %}
                  <h2>Employee Query</h2>
-
+                <form method="post" action="{% url 'search' %}">
+                    {% csrf_token %}
+                <input type="search"  name="search" value="">
+                <button type="submit">Search</button>
+                </form>
+                
                 <table border="1">
                     <thead>
                         <tr>
@@ -361,8 +370,6 @@
                             <th>Department</th>
                             <th>Query</th>
                             <th>Status</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
                             <th>Reply</th>
                         </tr>
                     </thead>
@@ -380,19 +387,6 @@
                                     {{i.Status}}
                                 {% endif %}</td>
                             <td>{% if i.Reply %}
-                                    Nan
-                                {% else %}
-                                    Edit
-                                {% endif %}</td>
-                            </td>
-                            <td>
-                                {% if i.Reply %}
-                                    Nan
-                                {% else %}
-                                    Delete
-                                {% endif %}</td>
-                            </td>
-                            <td>{% if i.Reply %}
                                     {{i.Reply}}
                                 {% else %}
                                     <a href="{% url 'q_reply' pk=i.id %}">Reply</a>
@@ -406,7 +400,7 @@
                 {% if q_data %}
                 <form method="POST" action="{% url 'a_reply' pk=q_data.id %}">
                     {% csrf_token %}
-
+                    print()
                     <label>Name</label>
                     <input type="text" value="{{ q_data.Name }}" name="name" readonly>
                     <br><br>
@@ -419,12 +413,75 @@
                     <label>Query</label>
                     <input type="text" value="{{ q_data.Query }}" name="query" readonly>
                     <br><br>
+
                     <label>Reply</label>
                     <textarea name="reply" rows="4"></textarea>
                     <br><br>
                     <button type="submit">Submit Query</button>
                 </form>
                 {% endif %}
+                {% elif add_item %}
+                <h2>Add Items</h2>
+                 <form action="{% url 'save_item' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>Item Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Desc.</label>
+                        <input type="text" name="desc" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Price</label>
+                        <input type="number" name="price" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Image</label>
+                        <input type="file" name="image" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item color</label>
+                        <input type="text" name="color" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Quantity</label>
+                        <input type="number" name="qty" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Item Category</label>
+                        <select name="category">
+                          <option value="">Male</option>
+                          <option value="">Female</option>
+                          <option value="">Kids</option> 
+                        </select>                         
+                    </div>
+                     </div>
+                    <button type="submit" class="submit-btn">Add Item</button>
+                </form>
+
+                {% elif show_item %}
+                {% for i in all_items %}
+                <div class="card" style="width: 18rem; display:flex; margin:10px" >
+                <img src="{{i.Item_image.url}}" class="card-img-top" alt="..." width=300px height=300px>
+                <div class="card-body" >
+                    <h5 class="card-title">{{i.Item_name}}</h5> 
+                    <p class="card-text">{{i.Item_desc}}</p>
+                    <p class="card-text">{{i.Item_price}}</p>
+                    <p class="card-text">{{i.Item_color}}</p>
+                    <p class="card-text">{{i.Item_category}}</p>
+
+                    <a href="#" class="btn btn-primary">Pay now</a>
+                </div>
+               
+                {% endfor %}
                 {% else %}
                 <h2>Welcome to Admin Dashboard</h2>
                 {% endif %}

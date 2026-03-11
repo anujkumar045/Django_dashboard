@@ -44,7 +44,24 @@ urlpatterns = [
     path('empdashboard/querydata',querydata,name='querydata'),
     path('empdashboard/all_query',all_query,name='all_query'),
     path('empdashboard/pending_query',pending_query,name='pending_query'),
+    path('empdashboard/pending_query/edit/<int:pk>/',edit,name='edit'),
+    path('empdashboard/all_query/update/<int:pk>/',update,name='update'),
+    path('empdashboard/all_query/delete/<int:pk>/',delete,name='delete'),
+    path('search',search,name='search'),
     path('empdashboard/done_query',done_query,name='done_query'),
     path('edit1',edit1,name='edit1'),
     path('reset',reset,name='reset'),
+    path('admindashboard/add_item/',add_item,name='add_item'),
+    path('admindashboard/save_item/',save_item,name='save_item'),
+    path('admindashboard/show_item/',show_item,name='show_item'),
+
+
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+'''
+ pip freeze > requirements.txt - create new File ,slow
+   pip freeze >> requirements.txt - used to append new package,fast
+   '''
+

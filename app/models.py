@@ -24,3 +24,14 @@ class Empquery(models.Model):
     Query=models.TextField()
     Status=models.CharField(default="pending")
     Reply=models.TextField(null=True)
+
+class Item(models.Model):
+    Item_name=models.CharField(max_length=20)
+    Item_desc=models.CharField(max_length=30)
+    Item_price=models.IntegerField()
+    Item_image=models.ImageField(upload_to='image',null=True)
+    Item_color=models.CharField(max_length=20)
+    Item_Qty=models.IntegerField()
+    Item_category=models.CharField(max_length=20)
+
+

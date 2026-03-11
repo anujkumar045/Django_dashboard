@@ -289,6 +289,7 @@
                  <h2>All Query</h2>
 
                 <table border="1">
+                    <input type="search" value="search">
                     <thead>
                         <tr>
                             <th>S.No.</th>
@@ -318,15 +319,15 @@
                             <td>{% if i.Reply %}
                                     Nan
                                 {% else %}
-                                    Edit
-                                {% endif %}</td>
+                                    <a href={% url 'edit' pk=i.id %}>Edit</a>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if i.Reply %}
                                     Nan
                                 {% else %}
-                                    Delete
-                                {% endif %}</td>
+                                    <a href="{% url 'delete' pk=i.id %}">Delete</a>
+                                {% endif %}
                             </td>
                             <td>{{i.Reply}}</td>
 
@@ -334,6 +335,31 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                {% if old_q_data %}
+                <form method="POST" action="{% url 'update' pk=old_q_data.id %}">
+                    {% csrf_token %}
+
+                    <label>Name</label>
+                    <input type="text" value="{{ old_q_data.Name }}" name="name" >
+
+                    <label>Email</label>
+                    <input type="email" value="{{ old_q_data.Email }}" name="email">
+
+                    <label>Department</label>
+                    <select name="department" required>
+                        <option value="">Select</option>
+                        {% for i in all_dept %}
+                        <option>{{ i.Dep_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Query</label>
+                    <input type="text" name="query" value="{{old_q_data.Query}}">
+
+                    <button type="submit">UPDATE</button>
+                </form>
+                {% endif %}
                 
                 {% elif pending_query %}
                  <h2>Pending Query</h2>
@@ -362,7 +388,12 @@
                                 <td>{{ i.Department}}</td>
                                 <td>{{ i.Query}}</td>
                                 <td>{{ i.Status}}</td>
-                                <td><button>Edit</button></td>
+                                 <td>{% if i.Reply %}
+                                    Nan
+                                {% else %}
+                                    <a>Edit</a>
+                                {% endif %}</td>
+                            </td>
                                 <td><button>Delete</button></td>
                             </tr>
                           
@@ -370,8 +401,10 @@
                     </tbody>
                 </table>
 
+
+                
                 {% elif done_query %}
-                 <h2>Done Query</h2>
+                <h2>Done Query</h2>
 
                 <table border="1">
                     <thead>

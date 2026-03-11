@@ -2,12 +2,15 @@ from django.shortcuts import render,redirect
 from .models import Employee
 from .models import Department 
 from .models import Empquery
+from .models import Item
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 def landing(req):
     return render(req,'landing.html')
+
 
 def register(req):
     if req.method=='POST':
@@ -94,26 +97,33 @@ def userdashboard(req):
         return render(req,'userdashboard.html',{'data':userdata})
     return redirect('login')
 
+@never_cache
 def logout(req):
     if 'user_id' in req.session:
         req.session.flush()
         return redirect('login')
+    elif 'a_data' in req.session:
+        req.session.flush()
+        return redirect('login')
     return redirect('login')
 
+@never_cache
 def admindashboard(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
         return render(req,'admindashboard.html',{'data':a_data})
     else:
         return redirect('login')
-    
+
+@never_cache
 def add_dep(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
         return render(req,'admindashboard.html',{'data':a_data,'add_dep':True})
     else:
         return redirect('login')
-
+    
+@never_cache
 def save_data(req):
     if 'a_data' in req.session:
         if req.method=='POST':
@@ -134,6 +144,7 @@ def save_data(req):
     else:
         return redirect('login')
 
+@never_cache
 def show_dep(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
@@ -141,7 +152,8 @@ def show_dep(req):
         return render(req,'admindashboard.html',{'data':a_data,'show_dep':True,'all_dept':all_dept})
     else:
         return redirect('login')
-    
+
+@never_cache   
 def add_emp(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
@@ -150,6 +162,7 @@ def add_emp(req):
     else:
         return redirect('login')
 
+@never_cache
 def save_emp(req):
     if 'a_data' in req.session:
         if req.method=='POST':
@@ -178,7 +191,8 @@ def save_emp(req):
                 return render(req,'admindashboard.html',{'data':a_data,'add_dep':True})
     else:
         return redirect('login')
-    
+
+@never_cache   
 def show_emp(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
@@ -187,7 +201,8 @@ def show_emp(req):
         return render(req,'admindashboard.html',{'data':a_data,'show_emp':True,'all_emp':all_emp,'all_dept':all_dept})
     else:
         return redirect('login')
-    
+
+@never_cache   
 def emp_all_query(req):
     if 'a_data' in req.session:
         a_data=req.session.get('a_data')
@@ -196,6 +211,7 @@ def emp_all_query(req):
     else:
         return redirect("login")
 
+@never_cache
 def q_reply(req,pk):
     if 'a_data' in req.session:
         # q_d_id=Empquery.objects.get(id)
@@ -205,19 +221,20 @@ def q_reply(req,pk):
         return render(req,'admindashboard.html',{'q_data':q_data,'emp_all_query':emp_all_query})
     return redirect('login')
 
+@never_cache
 def a_reply(req,pk):
     if 'a_data' in req.session:
         q_old_data=Empquery.objects.get(id=pk)
         if req.method=='POST':
             ar=req.POST.get('reply')
             q_old_data.Reply=ar
-            q_old_data.save()          
             q_old_data.Status="Done"
-            q_old_data.save()
+            q_old_data.save()          
         a_data=req.session.get('a_data')
         emp_all_query=Empquery.objects.all()
         return render(req,'admindashboard.html',{'a_data':a_data,'emp_all_query':emp_all_query})
-            
+
+@never_cache          
 def empdashboard(req):
     if 'emp_id' in req.session:
         eid=req.session.get('emp_id')
@@ -225,7 +242,8 @@ def empdashboard(req):
         return render(req,'empdashboard.html',{'data':emp_data})
     else:
         return redirect('login')
-    
+
+@never_cache    
 def query(req):
     if 'emp_id' in req.session:
         # emp_data=req.session.get('emp_id')
@@ -235,6 +253,7 @@ def query(req):
         return render(req,'empdashboard.html',{'data':emp_data,'query':True,'all_dept':all_dept})
     return redirect('empdashboard')
 
+@never_cache
 def profile(req):
     if 'emp_id' in req.session:
         # emp_data=req.session.get('emp_id')
@@ -244,6 +263,7 @@ def profile(req):
         return render(req,'empdashboard.html',{'data':emp_data,'profile':True})
     return redirect('empdashboard')
 
+@never_cache
 def setting(req):
     if 'emp_id' in req.session:
         # emp_data=req.session.get('emp_id')
@@ -253,6 +273,7 @@ def setting(req):
         return render(req,'empdashboard.html',{'data':emp_data,'setting':True})
     return redirect('empdashboard')
 
+@never_cache
 def querydata(req):
     if req.method=='POST':
         if 'emp_id' in req.session:
@@ -269,7 +290,8 @@ def querydata(req):
         else:
             return redirect('empdashboard')
     return redirect('login')
-    
+
+@never_cache   
 def all_query(req):
     if 'emp_id' in req.session:
         eid=req.session.get('emp_id')
@@ -280,6 +302,7 @@ def all_query(req):
     else:
         return redirect("login")
 
+@never_cache
 def pending_query(req):
     if 'emp_id' in req.session:
         eid=req.session.get('emp_id')
@@ -289,7 +312,8 @@ def pending_query(req):
         return render(req,'empdashboard.html',{'data':emp_data,'pending_query':True,'pending_query':pending_query,'all_dept':all_dept})
     else:
         return redirect("login")
-    
+
+@never_cache
 def done_query(req):
     if 'emp_id' in req.session:
         eid=req.session.get('emp_id')
@@ -300,11 +324,49 @@ def done_query(req):
     else:
         return redirect("login")
     
+@never_cache
+def edit(req,pk):
+    if 'emp_id' in req.session:
+        old_q_data=Empquery.objects.get(id=pk)
+        eid=req.session.get('emp_id')
+        emp_data=Employee.objects.get(id=eid)
+        all_query=Empquery.objects.filter(Email=emp_data.Email)
+        all_dept=Department.objects.all()
+        return render(req,'empdashboard.html',{'data':emp_data,'all_dept':all_dept,'all_query':all_query,'old_q_data':old_q_data})
+    else:
+        return redirect('login')
 
+@never_cache
+def update(req,pk):
+   if 'emp_id' in req.session:
+      eid=req.session.get('emp_id')
+      emp_data = Employee.objects.get(id=eid)
+      if req.method=='POST':
+         n=req.POST.get('name')
+         d=req.POST.get('dept')
+         q=req.POST.get('query')
+         e_old_data=Empquery.objects.get(id=pk)
+         e_old_data.Name=n
+         e_old_data.Dept=d
+         e_old_data.Query=q
+         e_old_data.save()
+      all_Query=Empquery.objects.all()
+      return render(req,'empdashboard.html',{'data':emp_data,'all_Query':all_Query})
+   return redirect('login')
 
+@never_cache
+def delete(req,pk):
+    if 'emp_id' in req.session:
+        delete_data =Empquery.objects.get(id=pk)
+        delete_data.delete()
+        return redirect('all_query')
+    return redirect('login')
+
+@never_cache
 def edit1(req):
     return render(req,'edit.html')
 
+@never_cache
 def reset(req):
      if 'emp_id' in req.session:
         if req.method=='POST':
@@ -320,8 +382,44 @@ def reset(req):
             return render(req,'edit.html')
      return render(req,'login.html')
 
+@never_cache
+def search(req):
+    if 'emp_id' in req.session:
+        eid=req.session.get('emp_id')
+        emp_data=Employee.objects.get(id=eid)
+        if req.method =='POST':
+            s=req.POST.get('search')
+            all_query=Empquery.objects.filter(Email=emp_data.Email,Query=s)
+            # all_query=Empquery.objects.filter(Email__contains=emp_data.Email,Query__contains=s)
+            return render(req,'admindashboard.html',{'emp_data':emp_data,'emp_all_query':True,'all_query':all_query})
+    return redirect('admindashboard')
 
-    
-        
-        
-        
+@never_cache
+def add_item(req):
+    if 'a_data' in req.session:
+        a_data=req.session.get('a_data')
+        return render(req,'admindashboard.html',{'data':a_data,'add_item':True})
+    else:
+        return redirect('login')
+
+@never_cache
+def save_item(req):
+    if req.method=="POST":
+        i_n=req.POST.get("name")
+        i_d=req.POST.get("desc")
+        i_p=req.POST.get("price")
+        i_i=req.FILES.get("image")
+        i_c=req.POST.get("color")
+        i_q=req.POST.get("qty")
+        i_cg=req.POST.get("category")
+        Item.objects.create(Item_name=i_n,Item_desc=i_d,Item_price=i_p,Item_image=i_i,Item_color=i_c, Item_Qty=i_q, Item_category=i_cg)
+        messages.success("Item added")
+    return redirect('admindashboard')
+
+@never_cache   
+def show_item(req):
+     if 'a_data' in req.session:
+        a_data=req.session.get('a_data')
+        all_items=Item.objects.all()
+        return render(req,'admindashboard.html',{'data':a_data,'show_item':True,'all_items':all_items})
+     return redirect('login')
