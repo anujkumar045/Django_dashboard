@@ -425,3 +425,10 @@ def show_item(req):
      return redirect('login')
 
 
+# never_cache   
+# def show_item(req):
+#      if 'a_data' in req.session:
+#         a_data=req.session.get('a_data')
+#         all_items=Item.objects.all()
+#         return render(req,'admindashboard.html',{'data':a_data,'show_item':True,'all_items':all_items})
+#      return redirect('login')
